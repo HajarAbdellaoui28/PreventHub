@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    # CORRECTION : On remplace localhost par config-server
+    import: optional:configserver:${SPRING_CONFIG_SERVER_URL:http://config-server:8888}
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: 
+              - "http://localhost:4200"
+              - "http://localhost:4301" # Ton port de dev local
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            
+      routes:
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/auth/**
+            
+        - id: campaign-management-service
+          uri: lb://campaign-management-service
+          predicates:
+            - Path=/api/campaigns/**
+            
+        - id: risk-stratification-service
+          uri: lb://risk-stratification-service
+          predicates:
+            - Path=/api/risk/**
+            
+        - id: engagement-tracking-service
+          uri: lb://engagement-tracking-service
+          predicates:
+            - Path=/api/engagement/**
+            
+        - id: impact-analytics-service
+          uri: lb://impact-analytics-service
+          predicates:
+            - Path=/api/analytics/**
+            
+        - id: communication-service
+          uri: lb://communication-service
+          predicates:
+            - Path=/api/communications/**
+          
+server:
+  port: 8080
+
+security:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+
+# AJOUT OBLIGATOIRE POUR DOCKER : On indique la bonne adresse d'Eureka
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://service-registry:8761/eureka/

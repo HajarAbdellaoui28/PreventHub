@@ -1,0 +1,16 @@
+server:
+  port: 8095
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5437}/analytics_db
+    username: preventhub
+    password: preventhub
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs

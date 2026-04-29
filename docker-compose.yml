@@ -1,0 +1,274 @@
+version: "3.9"
+
+services:
+  postgres-identity:
+    image: postgres:16-alpine
+    container_name: preventhub-postgres-identity
+    restart: on-failure
+    environment:
+      POSTGRES_DB: identity_db
+      POSTGRES_USER: preventhub
+      POSTGRES_PASSWORD: preventhub
+    ports:
+      - "5433:5432"
+    volumes:
+      - identity-data:/var/lib/postgresql/data
+    networks:
+      - preventhub-net
+
+  postgres-campaign:
+    image: postgres:16-alpine
+    container_name: preventhub-postgres-campaign
+    restart: on-failure
+    environment:
+      POSTGRES_DB: campaign_db
+      POSTGRES_USER: preventhub
+      POSTGRES_PASSWORD: preventhub
+    ports:
+      - "5434:5432"
+    volumes:
+      - campaign-data:/var/lib/postgresql/data
+    networks:
+      - preventhub-net
+
+  postgres-risk:
+    image: postgres:16-alpine
+    container_name: preventhub-postgres-risk
+    restart: on-failure
+    environment:
+      POSTGRES_DB: risk_db
+      POSTGRES_USER: preventhub
+      POSTGRES_PASSWORD: preventhub
+    ports:
+      - "5435:5432"
+    volumes:
+      - risk-data:/var/lib/postgresql/data
+    networks:
+      - preventhub-net
+
+  postgres-engagement:
+    image: postgres:16-alpine
+    container_name: preventhub-postgres-engagement
+    restart: on-failure
+    environment:
+      POSTGRES_DB: engagement_db
+      POSTGRES_USER: preventhub
+      POSTGRES_PASSWORD: preventhub
+    ports:
+      - "5436:5432"
+    volumes:
+      - engagement-data:/var/lib/postgresql/data
+    networks:
+      - preventhub-net
+
+  postgres-analytics:
+    image: postgres:16-alpine
+    container_name: preventhub-postgres-analytics
+    restart: on-failure
+    environment:
+      POSTGRES_DB: analytics_db
+      POSTGRES_USER: preventhub
+      POSTGRES_PASSWORD: preventhub
+    ports:
+      - "5437:5432"
+    volumes:
+      - analytics-data:/var/lib/postgresql/data
+    networks:
+      - preventhub-net
+
+  postgres-communication:
+    image: postgres:16-alpine
+    container_name: preventhub-postgres-communication
+    restart: on-failure
+    environment:
+      POSTGRES_DB: communication_db
+      POSTGRES_USER: preventhub
+      POSTGRES_PASSWORD: preventhub
+    ports:
+      - "5438:5432"
+    volumes:
+      - communication-data:/var/lib/postgresql/data
+    networks:
+      - preventhub-net
+
+  config-server:
+    build:
+      context: ./backend
+      dockerfile: config-server/Dockerfile
+    container_name: preventhub-config-server
+    restart: on-failure
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCHLOCATIONS: file:/workspace/config-repo
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./backend/config-repo:/workspace/config-repo
+    networks:
+      - preventhub-net
+
+  service-registry:
+    build:
+      context: ./backend
+      dockerfile: service-registry/Dockerfile
+    container_name: preventhub-eureka
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+    ports:
+      - "8761:8761"
+    networks:
+      - preventhub-net
+
+  api-gateway:
+    build:
+      context: ./backend
+      dockerfile: api-gateway/Dockerfile
+    container_name: preventhub-gateway
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+      - service-registry
+    ports:
+      - "8080:8080"
+    networks:
+      - preventhub-net
+
+  identity-service:
+    build:
+      context: ./backend
+      dockerfile: identity-service/Dockerfile
+    container_name: preventhub-identity
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      DB_HOST: postgres-identity
+      DB_PORT: 5432
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+      - service-registry
+      - postgres-identity
+    networks:
+      - preventhub-net
+
+  campaign-management-service:
+    build:
+      context: ./backend
+      dockerfile: campaign-management-service/Dockerfile
+    container_name: preventhub-campaign
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      DB_HOST: postgres-campaign
+      DB_PORT: 5432
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+      - service-registry
+      - postgres-campaign
+    networks:
+      - preventhub-net
+
+  risk-stratification-service:
+    build:
+      context: ./backend
+      dockerfile: risk-stratification-service/Dockerfile
+    container_name: preventhub-risk
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      DB_HOST: postgres-risk
+      DB_PORT: 5432
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+      - service-registry
+      - postgres-risk
+    networks:
+      - preventhub-net
+
+  engagement-tracking-service:
+    build:
+      context: ./backend
+      dockerfile: engagement-tracking-service/Dockerfile
+    container_name: preventhub-engagement
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      DB_HOST: postgres-engagement
+      DB_PORT: 5432
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+      - service-registry
+      - postgres-engagement
+    networks:
+      - preventhub-net
+
+  impact-analytics-service:
+    build:
+      context: ./backend
+      dockerfile: impact-analytics-service/Dockerfile
+    container_name: preventhub-analytics
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      DB_HOST: postgres-analytics
+      DB_PORT: 5432
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+      - service-registry
+      - postgres-analytics
+    networks:
+      - preventhub-net
+
+  communication-service:
+    build:
+      context: ./backend
+      dockerfile: communication-service/Dockerfile
+    container_name: preventhub-communication
+    restart: on-failure
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      DB_HOST: postgres-communication
+      DB_PORT: 5432
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-registry:8761/eureka
+    depends_on:
+      - config-server
+      - service-registry
+      - postgres-communication
+    networks:
+      - preventhub-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: preventhub-frontend
+    restart: on-failure
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - preventhub-net
+
+networks:
+  preventhub-net:
+    driver: bridge
+
+volumes:
+  identity-data:
+  campaign-data:
+  risk-data:
+  engagement-data:
+  analytics-data:
+  communication-data:

@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@source "./app/**/*.{ts,html}";
+@source "./index.html";
+
+:root {
+  --bg: #f4f7fb;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface-strong: #ffffff;
+  --surface-soft: #eef4ff;
+  --text: #102033;
+  --muted: #607089;
+  --primary: #0f766e;
+  --primary-strong: #115e59;
+  --accent: #f97316;
+  --border: rgba(16, 32, 51, 0.08);
+  --shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+  color-scheme: light;
+  font-family: "Sora", "Manrope", "Segoe UI", sans-serif;
+}
+
+.dark {
+  --bg: #07111f;
+  --surface: rgba(12, 25, 43, 0.82);
+  --surface-strong: #0d1b2a;
+  --surface-soft: #102840;
+  --text: #eff6ff;
+  --muted: #93a6bf;
+  --primary: #34d399;
+  --primary-strong: #10b981;
+  --accent: #f59e0b;
+  --border: rgba(148, 163, 184, 0.14);
+  --shadow: 0 22px 60px rgba(2, 6, 23, 0.34);
+  color-scheme: dark;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top right, rgba(15, 118, 110, 0.16), transparent 25%),
+    radial-gradient(circle at bottom left, rgba(249, 115, 22, 0.12), transparent 20%),
+    linear-gradient(160deg, var(--bg), #edf2f9 54%, #f6fbff);
+  color: var(--text);
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at top right, rgba(52, 211, 153, 0.12), transparent 25%),
+    radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.12), transparent 20%),
+    linear-gradient(180deg, #07111f, #0b1730 56%, #12243c);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.glass-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(22px);
+}
+
+.metric-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.76));
+}
+
+.dark .metric-card {
+  background: linear-gradient(180deg, rgba(14,27,46,0.94), rgba(9,18,33,0.88));
+}
+
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.soft-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.p-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.p-component {
+  font-family: "Sora", "Manrope", "Segoe UI", sans-serif;
+}

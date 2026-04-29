@@ -1,0 +1,16 @@
+server:
+  port: 8094
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5436}/engagement_db
+    username: preventhub
+    password: preventhub
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs

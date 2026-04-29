@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: campaign-management-service
+  config:
+    import: optional:configserver:${SPRING_CONFIG_SERVER_URL:http://localhost:8888}
+  datasource:
+    # On récupère le DB_HOST et DB_PORT de ton docker-compose. S'ils sont absents, on met localhost par défaut.
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/campaign_db
+    username: preventhub
+    password: preventhub
+  jpa:
+    hibernate:
+      ddl-auto: update # Pratique pour le développement, crée les tables automatiquement
+    show-sql: true
+
+server:
+  port: 8092
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://service-registry:8761/eureka/
+
+security:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970

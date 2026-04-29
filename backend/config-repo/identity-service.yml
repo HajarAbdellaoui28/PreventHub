@@ -1,0 +1,24 @@
+server:
+  port: 8091
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/identity_db
+    username: preventhub
+    password: preventhub
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+security:
+  jwt:
+    secret: PreventHubJwtSecretPreventHubJwtSecret2026
+    expiration-seconds: 28800
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs

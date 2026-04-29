@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: identity-service
+  config:
+    import: optional:configserver:${SPRING_CONFIG_SERVER_URL:http://localhost:8888}
+  datasource:
+    # Pointe vers "identity_db"
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/identity_db
+    username: preventhub
+    password: preventhub
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8091
+
+security:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    expiration-seconds: 86400 # Correspond à 24 heures (en secondes)
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://service-registry:8761/eureka/

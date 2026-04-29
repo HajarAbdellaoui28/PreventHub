@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/auth/**
+        - id: campaign-management-service
+          uri: lb://campaign-management-service
+          predicates:
+            - Path=/api/campaigns/**
+        - id: risk-stratification-service
+          uri: lb://risk-stratification-service
+          predicates:
+            - Path=/api/risk/**
+        - id: engagement-tracking-service
+          uri: lb://engagement-tracking-service
+          predicates:
+            - Path=/api/engagement/**
+        - id: impact-analytics-service
+          uri: lb://impact-analytics-service
+          predicates:
+            - Path=/api/analytics/**
+        - id: communication-service
+          uri: lb://communication-service
+          predicates:
+            - Path=/api/communications/**
+
+security:
+  jwt:
+    secret: PreventHubJwtSecretPreventHubJwtSecret2026
