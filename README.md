@@ -7,7 +7,6 @@ PreventHub est une plateforme de prevention et de sante publique basee sur une a
 - `backend/` : microservices Spring Boot, Spring Cloud, OpenFeign, PostgreSQL et Swagger.
 - `frontend/` : application Angular 19 standalone avec Tailwind, PrimeNG, Angular Material et ApexCharts.
 - `docs/` : conception, diagrammes, endpoints et guide de demonstration.
-- `report/` : rapport academique LaTeX.
 - `docker-compose.yml` : orchestration complete de la plateforme.
 
 ## Architecture
